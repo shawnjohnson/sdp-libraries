@@ -16,23 +16,32 @@ void call(String img, Closure body){
   
   config.images ?: { error "SDP Image Config not defined in Pipeline Config" } ()
   
-  def sdp_img_reg = config.images.registry ?:
-                    { error "SDP Image Registry not defined in Pipeline Config" } ()
-  
-  def sdp_img_repo = config.images.repository ?:
-                     { return "sdp" }()
-                     
-  def sdp_img_repo_cred = config.images.cred ?:
-                          { error "SDP Image Repository Credential not defined in Pipeline Config" }()
-  
-  def docker_args = config.images.docker_args ?:
-                    { return ""}()
-  
-  docker.withRegistry(sdp_img_reg, sdp_img_repo_cred){
-    docker.image("${sdp_img_repo}/${img}").inside("${docker_args}"){
+  if( config.images.local ){
+    docker.image(img).inside{
       body.resolveStrategy = Closure.DELEGATE_FIRST
       body.delegate = this
       body()
     }
+  } else { 
+    def sdp_img_reg = config.images.registry ?:
+                  { error "SDP Image Registry not defined in Pipeline Config" } ()
+
+    def sdp_img_repo = config.images.repository ?:
+                       { return "sdp" }()
+
+    def sdp_img_repo_cred = config.images.cred ?:
+                            { error "SDP Image Repository Credential not defined in Pipeline Config" }()
+
+    def docker_args = config.images.docker_args ?:
+                      { return ""}()
+
+    docker.withRegistry(sdp_img_reg, sdp_img_repo_cred){
+      docker.image("${sdp_img_repo}/${img}").inside("${docker_args}"){
+        body.resolveStrategy = Closure.DELEGATE_FIRST
+        body.delegate = this
+        body()
+      }
+    }    
   }
+
 }
