@@ -33,8 +33,12 @@ def call(){
         }
         timeout(time: 1, unit: 'HOURS') {
           def qg = waitForQualityGate()
-          if (qg.status != 'OK' && enforce) {
-            error "Pipeline aborted due to quality gate failure: ${qg.status}"
+          if (qg.status != 'OK'){
+            if(enforce){
+              error "Pipeline aborted due to quality gate failure: ${qg.status}"
+            }else{
+              unstable "SonarQube quality gate failure, but current configuration permits this" 
+            }
           }
         }
       }
