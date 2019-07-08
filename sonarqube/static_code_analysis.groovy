@@ -9,8 +9,10 @@ def call(){
   cred_id = config.credential_id ?:
             "sonarqube"
 
-  enforce = config.enforce_quality_gate ?:
-            true
+  enforce = config.subMap("enforce_quality_gate") ? config.enforce_quality_gate : true 
+  if(!(enforce in [ true, false ])){
+    error "SonarQube Library Config 'enforce_quality_gate' must be true or false" 
+  }
 
   stage("SonarQube Analysis"){
     inside_sdp_image "sonar-scanner", {
