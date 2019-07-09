@@ -13,7 +13,7 @@ def call(){
   if(!(enforce in [ true, false ])){
     error "SonarQube Library Config 'enforce_quality_gate' must be true or false" 
   }
-
+  
   stage("SonarQube Analysis"){
     inside_sdp_image "sonar-scanner", {
       withCredentials([usernamePassword(credentialsId: cred_id, passwordVariable: 'token', usernameVariable: 'user')]) {
@@ -21,12 +21,14 @@ def call(){
           unstash "workspace"
           try{ unstash "test-results" }catch(ex){}
           sh "mkdir -p empty"
-          projectKey = "$env.REPO_NAME:$env.BRANCH_NAME".replaceAll("/", "_")
-          projectName = "$env.REPO_NAME - $env.BRANCH_NAME"
-          def script = """sonar-scanner -X -Dsonar.login=${user} -Dsonar.password=${token} -Dsonar.projectKey="$projectKey" -Dsonar.projectName="$projectName" -Dsonar.projectBaseDir=. """
+          
+          def script = "sonar-scanner -X -Dsonar.login=${user} -Dsonar.password=${token} "
            
-          if (!fileExists("sonar-project.properties"))
-            script += "-Dsonar.sources=\"./src\""
+          if (!fileExists("sonar-project.properties")){
+            projectKey  = "$env.REPO_NAME:$env.BRANCH_NAME".replaceAll("/", "_")
+            projectName = "$env.REPO_NAME - $env.BRANCH_NAME"
+            script += "-Dsonar.sources=\"./src\" -Dsonar.projectKey="$projectKey" -Dsonar.projectName="$projectName" -Dsonar.projectBaseDir=."
+          }
 
           sh script
             
