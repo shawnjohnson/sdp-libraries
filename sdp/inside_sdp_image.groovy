@@ -18,8 +18,6 @@ void call(String img, Closure body){
   
   if( config.images.local ){
     docker.image(img).inside{
-      body.resolveStrategy = Closure.DELEGATE_FIRST
-      body.delegate = this
       body()
     }
   } else { 
