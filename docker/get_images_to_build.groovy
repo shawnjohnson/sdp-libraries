@@ -16,13 +16,8 @@
 */
 def call(){
 
-    def (image_reg) = get_registry_info() // config.registry
+    def image_reg = config.registry // config.registry
     def path_prefix = config.repo_path_prefix ? config.repo_path_prefix + "/" : ""
-
-    def build_strategies = [ "docker-compose", "modules", "dockerfile" ]
-    if (config.build_strategy)
-    if (!(config.build_strategy in build_strategies))
-      error "build strategy: ${config.build_strategy} not one of ${build_strategies}"
 
     def images = []
 

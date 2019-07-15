@@ -4,7 +4,7 @@
 */
 
 void call(){
-  def (image_repo, image_repo_cred) = get_registry_info()
+  def (image_repo, image_repo_cred) = [config.registry, config.cred]
 
   withCredentials([usernamePassword(credentialsId: image_repo_cred, passwordVariable: 'pass', usernameVariable: 'user')]) {
     sh "echo ${pass} | docker login -u ${user} --password-stdin ${image_repo}"
