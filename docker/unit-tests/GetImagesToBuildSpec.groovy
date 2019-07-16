@@ -17,23 +17,23 @@ public class GetImagesToBuildSpec extends JenkinsPipelineSpecification {
 
   def setup() {
     GetImagesToBuild = loadPipelineScriptForTest("docker/get_images_to_build.groovy")
-    explicitlyMockPipelineStep("get_registry_info")
+    //explicitlyMockPipelineStep("get_registry_info")
 
-    getPipelineMock("get_registry_info")() >> ["test_registry", "test_cred"]
+    //getPipelineMock("get_registry_info")() >> ["test_registry", "test_cred"]
   }
 
-  def "Get_registry_info method is called" () {
-    setup:
-      GetImagesToBuild.getBinding().setVariable("config", [:])
-    when:
-      GetImagesToBuild()
-    then:
-      1 * getPipelineMock("get_registry_info")() >> ["test_registry", "test_cred"]
-  }
+  // def "Get_registry_info method is called" () {
+  //   setup:
+  //     GetImagesToBuild.getBinding().setVariable("config", [:])
+  //   when:
+  //     GetImagesToBuild()
+  //   then:
+  //     1 * getPipelineMock("get_registry_info")() >> ["test_registry", "test_cred"]
+  // }
 
   def "path_prefix Is An Empty String If No repo_path_prefix Is Set In The Config" () {
     setup:
-      GetImagesToBuild.getBinding().setVariable("config", [repo_path_prefix: null, build_strategy: build_strategy])
+      GetImagesToBuild.getBinding().setVariable("config", [registry: "test_registry", repo_path_prefix: null, build_strategy: build_strategy])
       GetImagesToBuild.getBinding().setVariable("env", [REPO_NAME: "git_repo", GIT_SHA: "8675309"])
       getPipelineMock("findFiles")([glob: "*/Dockerfile"]) >> [[path: "service/Dockerfile"]]
     when:
@@ -48,7 +48,7 @@ public class GetImagesToBuildSpec extends JenkinsPipelineSpecification {
 
   def "path_prefix Is Properly Prepended To Repo Value" () {
     setup:
-      GetImagesToBuild.getBinding().setVariable("config", [repo_path_prefix: "test_prefix", build_strategy: build_strategy])
+      GetImagesToBuild.getBinding().setVariable("config", [registry: "test_registry", repo_path_prefix: "test_prefix", build_strategy: build_strategy])
       GetImagesToBuild.getBinding().setVariable("env", [REPO_NAME: "git_repo", GIT_SHA: "8675309"])
       getPipelineMock("findFiles")([glob: "*/Dockerfile"]) >> [[path: "service/Dockerfile"]]
     when:
@@ -61,21 +61,21 @@ public class GetImagesToBuildSpec extends JenkinsPipelineSpecification {
       "modules"      | "service"     | "test_prefix/git_repo_service"
   }
 
-  def "Invalid build_strategy Throws Error" () {
-    setup:
-      GetImagesToBuild.getBinding().setVariable("config", [build_strategy: x])
-    when:
-      GetImagesToBuild()
-    then:
-      y * getPipelineMock("error")("build strategy: ${x} not one of [docker-compose, modules, dockerfile]")
-    where:
-      x                | y
-      "docker-compose" | 0
-      "Kobayashi Maru" | 1
-      "modules"        | 0
-      "dockerfile"     | 0
-      "Starfleet"      | 1
-  }
+  // def "Invalid build_strategy Throws Error" () {
+  //   setup:
+  //     GetImagesToBuild.getBinding().setVariable("config", [build_strategy: x])
+  //   when:
+  //     GetImagesToBuild()
+  //   then:
+  //     y * getPipelineMock("error")("build strategy: ${x} not one of [docker-compose, modules, dockerfile]")
+  //   where:
+  //     x                | y
+  //     "docker-compose" | 0
+  //     "Kobayashi Maru" | 1
+  //     "modules"        | 0
+  //     "dockerfile"     | 0
+  //     "Starfleet"      | 1
+  // }
 
   def "docker-compose build_strategy Throws Error" () {
     setup:
@@ -88,7 +88,7 @@ public class GetImagesToBuildSpec extends JenkinsPipelineSpecification {
 
   def "modules build_strategy Builds Correct Image List" () {
     setup:
-      GetImagesToBuild.getBinding().setVariable("config", [build_strategy: "modules"])
+      GetImagesToBuild.getBinding().setVariable("config", [registry: "test_registry", build_strategy: "modules"])
       GetImagesToBuild.getBinding().setVariable("env", [REPO_NAME: "Vulcan", GIT_SHA: "1234abcd"])
       getPipelineMock("findFiles")([glob: "*/Dockerfile"]) >> [[path: "planet/Romulus"], [path: "planet2/Earth"]]
       GetImagesToBuild.getBinding().setVariable("pipelineConfig", [application_image_repository: "Enterprise"])
@@ -112,7 +112,7 @@ public class GetImagesToBuildSpec extends JenkinsPipelineSpecification {
 
   def "dockerfile build_strategy Builds Correct Image List" () {
     setup:
-      GetImagesToBuild.getBinding().setVariable("config", [build_strategy: "dockerfile"])
+      GetImagesToBuild.getBinding().setVariable("config", [registry: "test_registry", build_strategy: "dockerfile"])
       GetImagesToBuild.getBinding().setVariable("env", [REPO_NAME: "Vulcan", GIT_SHA: "5678efgh"])
       getPipelineMock("findFiles")([glob: "*/Dockerfile"]) >> [[path: "planet/Romulus"]]
       GetImagesToBuild.getBinding().setVariable("pipelineConfig", [application_image_repository: "Enterprise"])

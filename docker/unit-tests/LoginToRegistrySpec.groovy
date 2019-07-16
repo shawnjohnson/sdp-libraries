@@ -14,24 +14,25 @@ public class LoginToRegistrySpec extends JenkinsPipelineSpecification {
   def setup() {
     LoginToRegistry = loadPipelineScriptForTest("docker/login_to_registry.groovy")
 
-    explicitlyMockPipelineStep("get_registry_info")
+    //explicitlyMockPipelineStep("get_registry_info")
   }
 
-  def "Get_repo_info method's Values Are Passed to withCredentials" () {
-    when:
-      LoginToRegistry()
-    then:
-      1 * getPipelineMock("get_registry_info")() >> ["test_registry", "test_cred_id"]
-    then:
-      1 * getPipelineMock("usernamePassword.call")([credentialsId: "test_cred_id", passwordVariable: 'pass', usernameVariable: 'user']) >> {
-        LoginToRegistry.getBinding().setVariable("user", "user")
-        LoginToRegistry.getBinding().setVariable("pass", "pass")
-      }
-  }
+  // def "Get_repo_info method's Values Are Passed to withCredentials" () {
+  //   when:
+  //     LoginToRegistry()
+  //   then:
+  //     1 * getPipelineMock("get_registry_info")() >> ["test_registry", "test_cred_id"]
+  //   then:
+  //     1 * getPipelineMock("usernamePassword.call")([credentialsId: "test_cred_id", passwordVariable: 'pass', usernameVariable: 'user']) >> {
+  //       LoginToRegistry.getBinding().setVariable("user", "user")
+  //       LoginToRegistry.getBinding().setVariable("pass", "pass")
+  //     }
+  // }
 
   def "Docker Login Command Is Run" () {
     setup:
-      getPipelineMock("get_registry_info")() >> ["test_registry", "test_cred_id"]
+      //getPipelineMock("get_registry_info")() >> ["test_registry", "test_cred_id"]
+      LoginToRegistry.getBinding().setVariable("config", [registry: "test_registry", cred: "test_cred_id"])
     when:
       LoginToRegistry()
     then:
