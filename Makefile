@@ -28,7 +28,6 @@ docs: ## builds documentation in _build/html
       ## run make docs live for hot reloading of edits during development
 	make clean
 	make image
-	make get-remote-docs
 
 	@if [ "$(filter-out $@,$(MAKECMDGOALS))" = "live" ]; then\
 		docker run -p 8000:8000 -v $(shell pwd):/app sdp-docs sphinx-autobuild -b html $(ALLSPHINXOPTS) . $(BUILDDIR)/html -H 0.0.0.0;\
@@ -48,10 +47,6 @@ test: ## Automatically runs unit tests
 	  gradle --no-daemon test;\
 	fi
 
-#push:
-#	make image
-#	make get-remote-docs
-# need to add sphinx-versioning command here when docs are ready to go public
 
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).

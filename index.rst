@@ -7,6 +7,6 @@ Pipeline Libraries
    :glob:
    :caption: Contents:
 
-   **/README
+   */README
 
 
