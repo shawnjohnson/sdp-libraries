@@ -3,6 +3,6 @@ node{
   stage("Unit Test"){
     sh "make test docker" 
     archiveArtifacts "target/reports/tests/test/**" 
-    junit "target/test-results/test/**" 
+    junit "target/test-results/test/*.xml" 
   }
 }
