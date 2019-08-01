@@ -3,7 +3,7 @@
   This software package is licensed under the Booz Allen Public License. The license can be found in the License file or at http://boozallen.github.io/licenses/bapl
 */
 
-void call(Map args, Closure body){
+void call(Map args, body){
 
   // check required parameters
   if (!args.url || !args.cred)
@@ -26,7 +26,7 @@ void call(Map args, Closure body){
           push = "push"
           body.resolveStrategy = Closure.DELEGATE_FIRST
           body.delegate = this
-          body.run()
+          body.call()
         }
       }
     }
