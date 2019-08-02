@@ -90,7 +90,7 @@ void update_values_file(values_file, config_repo){
   values = readYaml file: values_file
   key = env.REPO_NAME.replaceAll("-","_")
   echo "writing new Git SHA ${env.GIT_SHA} to image_shas.${key} in ${values_file}"
-  values.image_shas[key] = env.FEATURE_SHA ?: env.GIT_SHA
+  values.image_shas[key] = env.GIT_SHA
   sh "rm ${values_file}"
   writeYaml file: values_file, data: values
 
