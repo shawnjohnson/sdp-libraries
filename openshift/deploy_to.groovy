@@ -84,7 +84,7 @@ void update_values_file(values_file, config_repo, app_env){
   if (!fileExists(values_file))
     error "Values File ${values_file} does not exist in ${config_repo}"
 
-  if(app_env.short_name.equals("prod"){
+  if(app_env.short_name.equals("prod")){
     old = readYaml file: "values.dev.yaml"
     values = readYaml file: values_file
     key = env.REPO_NAME.replaceAll("-","_")
