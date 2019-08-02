@@ -66,29 +66,6 @@ void call(app_env){
                       {error "Values File To Use For This Chart Not Defined"}()
 
 
-    /*
-       if this is a merge commit we need to retag the image so that the sha
-       referenced in the values file represents the merge commit rather than
-       the head of the feature branch.  this is primarily for auditing purposes
-       of being able to see all the features based merged based on the image shas.
-
-        NOTE: this puts a dependency on the docker library (or whatever image building library
-        is used.  this library must supply a retag method)
-    */
-    def promote_image = app_env.promote_previous_image != null ? app_env.promote_previous_image :
-                        config.promote_previous_image != null ? config.promote_previous_image :
-                        true
-    if (!(promote_image instanceof Boolean)){
-      error "OpenShift Library expects 'promote_previous_image' configuration to be true or false."
-    }
-
-    if (promote_image){
-      if (env.FEATURE_SHA){
-        retag(env.FEATURE_SHA, env.GIT_SHA)
-      }
-    } else{
-      echo "expecting image was already built"
-    }
 
 
     withGit url: config_repo, cred: git_cred, {
