@@ -65,19 +65,11 @@ void call(app_env){
                       app_env.short_name ? "values.${app_env.short_name}.yaml" :
                       {error "Values File To Use For This Chart Not Defined"}()
 
-
-    if(app_env.short_name.equals("prod")){
-      if(env.FEATURE_SHA){
-        retag(env.FEATURE_SHA, env.GIT_SHA)
-      }
-    }
-
-
     withGit url: config_repo, cred: git_cred, {
       inside_sdp_image "openshift_helm", {
         withCredentials([usernamePassword(credentialsId: tiller_credential, passwordVariable: 'token', usernameVariable: 'user')]) {
           withEnv(["TILLER_NAMESPACE=${tiller_namespace}"]) {
-            this.update_values_file( values_file, config_repo )
+            this.update_values_file( values_file, config_repo, app_env )
             this.oc_login ocp_url, token
             this.do_release release, values_file
             this.push_config_update values_file
@@ -88,16 +80,25 @@ void call(app_env){
   }
 }
 
-void update_values_file(values_file, config_repo){
+void update_values_file(values_file, config_repo, app_env){
   if (!fileExists(values_file))
     error "Values File ${values_file} does not exist in ${config_repo}"
 
-  values = readYaml file: values_file
-  key = env.REPO_NAME.replaceAll("-","_")
-  echo "writing new Git SHA ${env.GIT_SHA} to image_shas.${key} in ${values_file}"
-  values.image_shas[key] = env.GIT_SHA
-  sh "rm ${values_file}"
-  writeYaml file: values_file, data: values
+  if(app_env.short_name.equals("prod"){
+    old = readYaml file: "values.dev.yaml"
+    values = readYaml file: values_file
+    key = env.REPO_NAME.replaceAll("-","_")
+    values.image_shas[key] = old.image_shas[key]
+    sh "rm ${values_file}"
+    writeYaml file: values_file, data: values
+  }else{
+    values = readYaml file: values_file
+    key = env.REPO_NAME.replaceAll("-","_")
+    echo "writing new Git SHA ${env.GIT_SHA} to image_shas.${key} in ${values_file}"
+    values.image_shas[key] = env.GIT_SHA
+    sh "rm ${values_file}"
+    writeYaml file: values_file, data: values
+  }
 
 }
 
