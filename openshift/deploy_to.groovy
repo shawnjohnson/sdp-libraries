@@ -66,6 +66,11 @@ void call(app_env){
                       {error "Values File To Use For This Chart Not Defined"}()
 
 
+    if(app_env.short_name.equals("prod")){
+      if(env.FEATURE_SHA){
+        retag(env.FEATURE_SHA, env.GIT_SHA)
+      }
+    }
 
 
     withGit url: config_repo, cred: git_cred, {
