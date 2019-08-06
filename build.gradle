@@ -28,7 +28,7 @@ sourceSets{
                 besides their unit-tests
             */
             srcDirs = getLibraries()
-            exclude "**/unit-tests"
+            exclude "**/unit-tests", "**/library_config.groovy"
         }
     }
     test{
@@ -101,4 +101,6 @@ dependencies {
     jenkinsTest group: "org.jenkins-ci.plugins", name: "credentials-binding", version: "1.16"
     jenkinsTest group: "org.jenkins-ci.plugins", name: "docker-workflow", version: "1.17"
 
+    //our plugin
+    jenkinsPlugins 'org.jenkins-ci.plugins:templating-engine:1.3'
 }
