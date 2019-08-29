@@ -52,9 +52,14 @@ def call() {
         chmod -R 777 \$(pwd)${report_dir}
       fi
       """
-        sh """
+      
+      sh """
         docker run -v \$(pwd):/src -v \$(pwd)${data_dir}:/usr/share/dependency-check/data -v \$(pwd)${report_dir}:/report owasp/dependency-check --scan ${scan_target} --format "${report_format}" --project "OWASP_dependency_check" --out /report
-        """
+      """
+      
+      stash "workspace" 
+      archiveArtifacts allowEmptyArchive: true, artifacts: "${report_dir}/**"
+      
     
     }
   }
