@@ -40,21 +40,21 @@ def call() {
         }
       }
 
-      def data_dir = "/owasp_logs/data"
-      def report_dir = "/owasp_logs/reports"
+      def data_dir = "owasp_logs/data"
+      def report_dir = "owasp_logs/reports"
 
       sh """
       if [ ! -d "$data_dir" ]; then
         echo "Initially creating persistent directories"
-        mkdir -p \$(pwd)${data_dir}
-        chmod -R 777 \$(pwd)${data_dir}
-        mkdir -p \$(pwd)${report_dir}
-        chmod -R 777 \$(pwd)${report_dir}
+        mkdir -p \$(pwd)/${data_dir}
+        chmod -R 777 \$(pwd)/${data_dir}
+        mkdir -p \$(pwd)/${report_dir}
+        chmod -R 777 \$(pwd)/${report_dir}
       fi
       """
       
       sh """
-        docker run -v \$(pwd):/src -v \$(pwd)${data_dir}:/usr/share/dependency-check/data -v \$(pwd)${report_dir}:/report owasp/dependency-check --scan ${scan_target} --format "${report_format}" --project "OWASP_dependency_check" --out /report
+        docker run -v \$(pwd):/src -v \$(pwd)/${data_dir}:/usr/share/dependency-check/data -v \$(pwd)/${report_dir}:/report owasp/dependency-check --scan ${scan_target} --format "${report_format}" --project "OWASP_dependency_check" --out /report
       """
       
       stash "workspace" 
