@@ -53,7 +53,7 @@ def call() {
       fi
       """
 
-      inside_sdp_image "owasp-dep-check:$image_version", {
+      docker.image("owasp/dependency-check:$image_version").inside() {
         try {
           sh """ /usr/share/dependency-check/bin/dependency-check.sh \
             --scan ${scan_target} \
