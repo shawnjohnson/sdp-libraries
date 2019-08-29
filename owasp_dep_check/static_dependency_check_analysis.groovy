@@ -52,30 +52,10 @@ def call() {
         chmod -R 777 "$report_dir"
       fi
       """
-
-      docker.image("owasp/dependency-check:$image_version").inside() {
-        try {
-          sh """ /usr/share/dependency-check/bin/dependency-check.sh \
-            --scan ${scan_target} \
-            --format \"${report_format}\" \
-            --project \"OWASP_dependency_check\" \
-            --out ${report_dir} \
-            ${exclude_opt}
-          """
-        }
-        catch (ex) {
-          println "static dependency check failed with exception: " + ex
-          if (cvss_threshold > 10) error "Error occured when running OWASP Dependency Check"
-          else error 'Vulnerabilities found over threshold - stopping build'
-          throw ex
-        }
-        finally {
-          echo 'Publishing reports'
-          sh "ls -l $WORKSPACE/owasp_logs/"
-          //TODO: stop archiveArtifacts from failing if "owasp_logs/reports" DNE or is empty
-          archiveArtifacts artifacts: "owasp_logs/reports/*.*"
-        }
-      }
+        sh """
+        docker run owasp/dependency-check --scan ${scan_target} --format "${report_format}" --project "OWASP_dependency_check" --out ${report_dir} ${exclude_opt}
+        """
+    
     }
   }
 }
