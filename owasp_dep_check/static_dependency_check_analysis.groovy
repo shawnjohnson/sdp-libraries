@@ -60,11 +60,6 @@ def call() {
             --format \"${report_format}\" \
             --project \"OWASP_dependency_check\" \
             --out ${report_dir} \
-            --failOnCVSS ${cvss_threshold} \
-            --cveUrl12Base     "https://nvd.nist.gov/feeds/xml/cve/1.2/nvdcve-%d.xml.gz" \
-            --cveUrl20Base     "https://nvd.nist.gov/feeds/xml/cve/2.0/nvdcve-2.0-%d.xml.gz" \
-            --cveUrl12Modified "https://nvd.nist.gov/feeds/xml/cve/1.2/nvdcve-modified.xml.gz" \
-            --cveUrl20Modified "https://nvd.nist.gov/feeds/xml/cve/2.0/nvdcve-2.0-modified.xml.gz" \
             ${exclude_opt}
           """
         }
