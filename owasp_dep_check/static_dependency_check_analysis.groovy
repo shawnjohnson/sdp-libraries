@@ -9,7 +9,7 @@ def call() {
     stage ('Static Dependency Security Scan') {
 
       //The folder that is scanned; it should meet the requirements of the tool's scanners
-      def scan_target = config.scan_target ? "$WORKSPACE/${config.scan_target}" : "$WORKSPACE"
+      def scan_target = config.scan_target ? "/src/${config.scan_target}" : "/src"
 
       //The folders ()& their contents) that are ignored by the scan are passed in with the "--exclude" flag to the tool
       if ( ! config.exclude_dirs ) { //exclude_dirs is a comma-separated list of *directories* to ignore
