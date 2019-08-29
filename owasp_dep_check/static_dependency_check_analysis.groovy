@@ -53,7 +53,7 @@ def call() {
       fi
       """
         sh """
-        docker run -v \$(pwd):/src -v \$(pwd)${data_dir}:/usr/share/dependency-check/data \$(pwd)${report_dir}:/report owasp/dependency-check --scan ${scan_target} --format "${report_format}" --project "OWASP_dependency_check" --out /report
+        docker run -v \$(pwd):/src -v \$(pwd)${data_dir}:/usr/share/dependency-check/data -v \$(pwd)${report_dir}:/report owasp/dependency-check --scan ${scan_target} --format "${report_format}" --project "OWASP_dependency_check" --out /report
         """
     
     }
