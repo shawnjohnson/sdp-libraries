@@ -19,6 +19,7 @@ def call(){
           unstash "workspace"
           try{ unstash "test-results" }catch(ex){}
           sh "mkdir -p empty"
+          sh "ls -R owasp_logs"
           projectKey = "$env.REPO_NAME:$env.BRANCH_NAME".replaceAll("/", "_")
           projectName = "$env.REPO_NAME - $env.BRANCH_NAME"
           def script = """sonar-scanner -X -Dsonar.login='${user}' -Dsonar.password='${token}' -Dsonar.projectKey="$projectKey" -Dsonar.projectName="$projectName" -Dsonar.projectBaseDir=. """
