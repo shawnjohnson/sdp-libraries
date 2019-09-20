@@ -26,6 +26,8 @@ def call(){
 
     def images = []
 
+    def imageName = config.imageName ?: env.REPO_NAME
+
     switch (config.build_strategy) {
       case "docker-compose":
         error "docker-compose build strategy not implemented yet"
@@ -44,7 +46,7 @@ def call(){
       case null:
         images.push([
           registry: image_reg,
-          repo: "${path_prefix}${env.REPO_NAME}",
+          repo: "${path_prefix}${imageName}".toLowerCase(),
           tag: env.GIT_SHA,
           context: "."
         ])
