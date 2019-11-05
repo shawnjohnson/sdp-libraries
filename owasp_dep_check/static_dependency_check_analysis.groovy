@@ -5,82 +5,87 @@
 
 def call() {
   node {
-    unstash "workspace"
-    stage ('Static Dependency Security Scan') {
 
-      //The folder that is scanned; it should meet the requirements of the tool's scanners
-      def scan_target = config.scan_target ? "$WORKSPACE/${config.scan_target}" : "$WORKSPACE"
-
-      //The folders ()& their contents) that are ignored by the scan are passed in with the "--exclude" flag to the tool
-      if ( ! config.exclude_dirs ) { //exclude_dirs is a comma-separated list of *directories* to ignore
-        echo "No dir(s) excluded."
-        exclude_opt = ""
-      } else {
-        echo "Excluding dir(s): ${config.exclude_dirs}"
-        exclude_opt = config.exclude_dirs.replace(',','/**\' --exclude \'') //need an additional flag for each dir to ignore
-        exclude_opt = "--exclude \'${exclude_opt}/**\'"
-        echo "Exclude command: $exclude_opt"
-      }
-
-      // Vulnerabilities are scored 0-10, w/ 10 being most severe. This threshold needs to be >0
-      // For any threshold greater than 10, the pipeline will not fail due to any detected vulnerability
-      def cvss_threshold = (config.cvss_threshold == "pass") ? "11" :
-                           (config.cvss_threshold ==~ /^\d+$/) ? config.cvss_threshold :
-                           {error "CVSS Threshold is not properly defined in Pipeline Config"}()
-
-      def image_version = config.image_version ?: "latest"
-
-      def report_format = config.report_format ?: "ALL"
-
-      //Check for "missing node_modules" corner case
-      if( ( fileExists("${scan_target}/package.json") || fileExists("${scan_target}/package-lock.json") ) && ! fileExists("${scan_target}/node_modules") ){
-        echo "package.json or package-lock.json detected, but not node_modules. Running \"npm install\" at least once"
-        docker.image("node:latest").inside{
-          sh "npm install"
+    try {
+      stage('Static Dependency Security Scan') {
+        if( getBinding().hasStep("build_source") ){
+          build_source()
         }
-      }
 
-      def data_dir = "owasp_logs/data"
-      def report_dir = "owasp_logs/reports"
+        def suppression = config.suppression_file ?" --suppression /src/${config.suppression_file}": null
 
-      sh """
+        //The folder that is scanned; it should meet the requirements of the tool's scanners
+        // /src will be a mounted volume
+        def scan_target = config.scan_target ? "/src/${config.scan_target}" : "/src"
+
+        if (config.scan_target.equals("package-lock.json")){
+          npm_install()
+        }
+
+        unstash "workspace"
+
+        //The folders ()& their contents) that are ignored by the scan are passed in with the "--exclude" flag to the tool
+        if (!config.exclude_dirs) { //exclude_dirs is a comma-separated list of *directories* to ignore
+          echo "No dir(s) excluded."
+          exclude_opt = ""
+        } else {
+          echo "Excluding dir(s): ${config.exclude_dirs}"
+          exclude_opt = config.exclude_dirs.replace(',', '/**\' --exclude \'')
+          //need an additional flag for each dir to ignore
+          exclude_opt = "--exclude \'${exclude_opt}/**\'"
+          echo "Exclude command: $exclude_opt"
+        }
+
+        // Vulnerabilities are scored 0-10, w/ 10 being most severe. This threshold needs to be >0
+        // For any threshold greater than 10, the pipeline will not fail due to any detected vulnerability
+        def cvss_threshold = (config.cvss_threshold == "pass") ? "11" :
+                (config.cvss_threshold ==~ /^\d+$/) ? config.cvss_threshold :
+                        { error "CVSS Threshold is not properly defined in Pipeline Config" }()
+
+        def image_version = config.image_version ?: "latest"
+
+        def report_format = config.report_format ?: "ALL"
+
+        //Check for "missing node_modules" corner case
+        if ((fileExists("${scan_target}/package.json") || fileExists("${scan_target}/package-lock.json")) && !fileExists("${scan_target}/node_modules")) {
+          echo "package.json or package-lock.json detected, but not node_modules. Running \"npm install\" at least once"
+          docker.image("node:latest").inside {
+            sh "npm install"
+          }
+        }
+
+        def data_dir = "owasp_logs/data"
+        def report_dir = "owasp_logs/reports"
+
+        sh """
       if [ ! -d "$data_dir" ]; then
         echo "Initially creating persistent directories"
-        mkdir -p "$data_dir"
-        chmod -R 777 "$data_dir"
-        mkdir -p "$report_dir"
-        chmod -R 777 "$report_dir"
+        mkdir -p \$(pwd)/${data_dir}
+        chmod -R 777 \$(pwd)/${data_dir}
+        mkdir -p \$(pwd)/${report_dir}
+        chmod -R 777 \$(pwd)/${report_dir}
       fi
       """
 
-      inside_sdp_image "owasp-dep-check:$image_version", {
-        try {
-          sh """ /usr/share/dependency-check/bin/dependency-check.sh \
-            --scan ${scan_target} \
-            --format \"${report_format}\" \
-            --project \"OWASP_dependency_check\" \
-            --out ${report_dir} \
-            --failOnCVSS ${cvss_threshold} \
-            --cveUrl12Base     "https://nvd.nist.gov/feeds/xml/cve/1.2/nvdcve-%d.xml.gz" \
-            --cveUrl20Base     "https://nvd.nist.gov/feeds/xml/cve/2.0/nvdcve-2.0-%d.xml.gz" \
-            --cveUrl12Modified "https://nvd.nist.gov/feeds/xml/cve/1.2/nvdcve-modified.xml.gz" \
-            --cveUrl20Modified "https://nvd.nist.gov/feeds/xml/cve/2.0/nvdcve-2.0-modified.xml.gz" \
-            ${exclude_opt}
-          """
+//        sh """
+//        docker run -v \$(pwd):/src -v \$(pwd)/${data_dir}:/usr/share/dependency-check/data -v \$(pwd)/${
+//          report_dir
+//        }:/report owasp/dependency-check --scan ${scan_target} --format "${report_format}" --project "OWASP_dependency_check" --out /report ${suppression ?: ''}
+//      """
+        def owasp_image = "owasp/dependency-check"
+        def owasp_docker_args = "-v \$(pwd):/src -v \$(pwd)/${data_dir}:/usr/share/dependency-check/data -v \$(pwd)/${report_dir }:/report"
+        def owasp_command_args = "--scan ${scan_target} --format \"${report_format}\" --project \"OWASP_dependency_check\" --out /report ${suppression ?: ''}"
+        inside_sdp_images(owasp_image, [args:owasp_docker_args, command:owasp_command_args ]){
+
         }
-        catch (ex) {
-          println "static dependency check failed with exception: " + ex
-          if (cvss_threshold > 10) error "Error occured when running OWASP Dependency Check"
-          else error 'Vulnerabilities found over threshold - stopping build'
-          throw ex
-        }
-        finally {
-          echo 'Publishing reports'
-          sh "ls -l $WORKSPACE/owasp_logs/"
-          //TODO: stop archiveArtifacts from failing if "owasp_logs/reports" DNE or is empty
-          archiveArtifacts artifacts: "owasp_logs/reports/*.*"
-        }
+
+        stash "workspace"
+        archiveArtifacts allowEmptyArchive: true, artifacts: "${report_dir}/**"
+
+
       }
+    }catch(any){
+      unstable("fault in owasp/dependency-check; ${any}")
     }
   }
 }
