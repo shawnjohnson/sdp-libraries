@@ -48,12 +48,14 @@ void call(String img, Map params = [:], Closure body){
 
   def docker_command = params.command ?: ""
 
+  def registry_path = sdp_img_reg - ~/\http(s)*:\/\/\b/
+
   if(!errors.empty) {
     error errors.join("; ")
   }
   
   docker.withRegistry(sdp_img_reg, sdp_img_repo_cred){
-    docker.image("docker.pkg.github.com/${sdp_img_repo}/${img}").withRun("${docker_args}", "${docker_command}"){
+    docker.image("${registry_path}/${sdp_img_repo}/${img}").withRun("${docker_args}", "${docker_command}"){
       body()
     }
   }
