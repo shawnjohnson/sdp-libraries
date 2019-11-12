@@ -53,7 +53,7 @@ void call(String img, Map params = [:], Closure body){
   }
   
   docker.withRegistry(sdp_img_reg, sdp_img_repo_cred){
-    docker.image("${sdp_img_repo}/${img}").withRun("${docker_args}", "${docker_command}"){
+    docker.image("docker.pkg.github.com/${sdp_img_repo}/${img}").withRun("${docker_args}", "${docker_command}"){
       body()
     }
   }
