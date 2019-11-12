@@ -1,5 +1,6 @@
 fields{
   optional{
+    image = String
     scan_target = String //some filepath
     exclude_dirs = String //comma-separated list
     suppression_file = String
