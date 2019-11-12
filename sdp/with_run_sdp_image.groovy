@@ -30,7 +30,7 @@ void call(String img, Map params = [:], Closure body){
     callConfig = callConfig + imageConfig
   }
 
-  if( !callConfig.images ){
+  if( !callConfig ){
     error getMissingConfigMsg()
   }
 
