@@ -48,7 +48,7 @@ void call(String img, Map params = [:], Closure body){
 
   def docker_command = params.command ?: ""
 
-  def registry_path = sdp_img_reg - ~/\http(s)*:\/\/\b/
+  def registry_path = sdp_img_reg - ~/\bhttp(s)*:\/\/\b/
 
   if(!errors.empty) {
     error errors.join("; ")
