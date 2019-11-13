@@ -5,6 +5,8 @@ void call(){
       return;
     }
 
+    def result_msgr = config.test_fail_on_exception ? error : unstable
+
     def image = config.image ?: "maven:3.6-jdk-8"
     def output_ls = config.ls_output ?: false
     docker.image(image).inside{
@@ -33,7 +35,7 @@ void call(){
           archiveArtifacts allowEmptyArchive: true, artifacts: "${test_results_file}"
         } catch (any) {
           println "issue with maven unit tests"
-          unstable("issue with maven unit tests")
+          result_msgr("issue with maven unit tests: ${any}")
         }
       }
     }

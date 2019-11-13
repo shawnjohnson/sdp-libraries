@@ -1,5 +1,5 @@
 void call(){
-  stage("build"){
+  stage("Maven Build"){
     def image = config.image ?: "maven:3.6-jdk-8"
     def install_script = config.install_script ?: "install"
     def output_ls = config.ls_output ?: false
