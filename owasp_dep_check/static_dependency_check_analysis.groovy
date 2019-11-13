@@ -5,9 +5,9 @@
 
 def call() {
   node {
+    def result_msgr
 
     try {
-      def result_msgr
       stage('Static Dependency Security Scan') {
         result_msgr = config.fail_on_exception ? error : unstable
 
