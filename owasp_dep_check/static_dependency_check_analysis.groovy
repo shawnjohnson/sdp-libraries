@@ -5,11 +5,8 @@
 
 def call() {
   node {
-    def result_msgr
-
     try {
       stage('Static Dependency Security Scan') {
-        result_msgr = config.fail_on_exception ? error : unstable
 
         if( getBinding().hasStep("build_source") ){
           build_source()
@@ -92,7 +89,7 @@ def call() {
 
       }
     }catch(any){
-      result_msgr("fault in owasp/dependency-check; ${any}")
+      unstable("fault in owasp/dependency-check; ${any}")
     }
   }
 }
