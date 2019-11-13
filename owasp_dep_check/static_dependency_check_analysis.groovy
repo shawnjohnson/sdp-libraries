@@ -7,8 +7,9 @@ def call() {
   node {
 
     try {
+      def result_msgr
       stage('Static Dependency Security Scan') {
-        def result_msgr = config.fail_on_exception ? error : unstable
+        result_msgr = config.fail_on_exception ? error : unstable
 
         if( getBinding().hasStep("build_source") ){
           build_source()
