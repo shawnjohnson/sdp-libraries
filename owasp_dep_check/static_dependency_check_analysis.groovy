@@ -8,8 +8,14 @@ def call() {
 
     try {
       stage('Static Dependency Security Scan') {
+        def result_msgr = config.fail_on_exception ? error : unstable
+
         if( getBinding().hasStep("build_source") ){
           build_source()
+        }
+
+        if( getBinding().hasStep("unit_test") ){
+          unit_test()
         }
 
         def suppression = config.suppression_file ?" --suppression /src/${config.suppression_file}": null
@@ -85,7 +91,7 @@ def call() {
 
       }
     }catch(any){
-      unstable("fault in owasp/dependency-check; ${any}")
+      result_msgr("fault in owasp/dependency-check; ${any}")
     }
   }
 }
