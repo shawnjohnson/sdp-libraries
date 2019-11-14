@@ -12,10 +12,6 @@ def call() {
           build_source()
         }
 
-        if( getBinding().hasStep("unit_test") ){
-          unit_test()
-        }
-
         def suppression = config.suppression_file ?" --suppression /src/${config.suppression_file}": null
 
         //The folder that is scanned; it should meet the requirements of the tool's scanners
@@ -71,15 +67,15 @@ def call() {
       fi
       """
 
-        sh """
-        docker run -v \$(pwd):/src -v \$(pwd)/${data_dir}:/usr/share/dependency-check/data -v \$(pwd)/${
-          report_dir
-        }:/report owasp/dependency-check --scan ${scan_target} --format "${report_format}" --project "OWASP_dependency_check" --out /report ${suppression ?: ''}
-      """
-//        def owasp_image = config.image ?: "owasp-dep-check"
-//        def owasp_docker_args = "-v \$(pwd):/src -v \$(pwd)/${data_dir}:/usr/share/dependency-check/data -v \$(pwd)/${report_dir }:/report"
-//        def owasp_command_args = "--scan ${scan_target} --format \"${report_format}\" --project \"OWASP_dependency_check\" --out /report ${suppression ?: ''}"
-//        with_run_sdp_image(owasp_image, [args:owasp_docker_args, command:owasp_command_args ])
+//        sh """
+//        docker run -v \$(pwd):/src -v \$(pwd)/${data_dir}:/usr/share/dependency-check/data -v \$(pwd)/${
+//          report_dir
+//        }:/report owasp/dependency-check --scan ${scan_target} --format "${report_format}" --project "OWASP_dependency_check" --out /report ${suppression ?: ''}
+//      """
+        def owasp_image = config.image ?: "owasp-dep-check"
+        def owasp_docker_args = "-v \$(pwd):/src -v \$(pwd)/${data_dir}:/usr/share/dependency-check/data -v \$(pwd)/${report_dir }:/report"
+        def owasp_command_args = "--scan ${scan_target} --format \"${report_format}\" --project \"OWASP_dependency_check\" --out /report ${suppression ?: ''}"
+        with_run_sdp_image(owasp_image, [args:owasp_docker_args, command:owasp_command_args ])
 
         stash "workspace"
         archiveArtifacts allowEmptyArchive: true, artifacts: "${report_dir}/**"
