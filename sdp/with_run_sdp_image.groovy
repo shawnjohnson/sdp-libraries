@@ -12,7 +12,7 @@
     sh "helm version"
   }
 */
-void call(String img, Map params = [:], Closure body){
+void call(String img, Map params = [:], Closure body = {}){
 
   Map libraryConfig = body.getOwner().getConfig()
   Map imageConfig = libraryConfig?.images?.getAt(img)
