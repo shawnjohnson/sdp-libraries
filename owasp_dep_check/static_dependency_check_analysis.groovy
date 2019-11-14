@@ -77,7 +77,7 @@ def call() {
         def owasp_docker_args = "-v \$(pwd):/src -v \$(pwd)/${data_dir}:/usr/share/dependency-check/data -v \$(pwd)/${report_dir }:/report"
         def owasp_command_args = "--scan ${scan_target} --format \"${report_format}\" --project \"OWASP_dependency_check\" --out /report ${suppression ?: ''}"
         with_run_sdp_image(owasp_image, [args:owasp_docker_args, command:owasp_command_args ]){
-          sh("ls -R ${report_dir}")
+          sh("ls -R .")
         }
 
         stash "workspace"
