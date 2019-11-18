@@ -67,9 +67,6 @@ def call() {
         chmod -R 777 \$(pwd)/${report_dir}
       fi
       """
-        sh """
-        docker login -u cokieffebah -p ******** https://docker.pkg.github.com
-      """
 
         sh """
         docker run -v \$(pwd):/src -v \$(pwd)/${data_dir}:/usr/share/dependency-check/data -v \$(pwd)/${
