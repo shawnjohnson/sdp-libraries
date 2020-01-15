@@ -1,1 +1,1 @@
-* xref:index.adoc[The A11y Machine]
+* xref:a11y.adoc[The A11y Machine]
