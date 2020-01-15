@@ -1,0 +1,138 @@
+== Contribution Guide
+
+Thanks for taking the time to read this! Whether you have an idea for a
+great feature, or have already made some improvements that you want to
+contribute, we really value your help in helping this project grow.
+
+This guide should help you find answers to common questions:
+
+* link:#what-is-an-sdp-library[What is an SDP library?]
+* link:#how-can-i-contribute[How can I contribute?]
+* link:#what-coding-or-style-conventions-should-i-follow[What coding or style conventions should I follow?]
+* link:#how-is-the-documentation-formatted[How is the documentation
+formatted?]
+* link:#how-do-i-test-my-changes[How do I test my changes?]
+* link:#where-can-i-report-a-bug[Where can I report a bug?]
+* link:#where-can-i-make-a-feature-suggestion[Where can I make a feature
+suggestion?]
+* link:#where-can-i-ask-other-questions[Where can I ask other
+questions?]
+
+=== What is an SDP library?
+
+Glad you asked! An SDP library is a collection of Jenkins pipeline steps
+that can be loaded and called using the Templating Engine plugin. These
+libraries are usually for using a certain tool (e.g. GitHub) in a
+software delivery pipeline. Check out our
+https://jenkinsci.github.io/templating-engine-plugin/pages/Library_Development/getting_started.html[documentation
+on SDP libraries] for more information, and browse this repository for
+examples.
+
+=== How can I contribute?
+
+Start by
+https://help.github.com/en/articles/creating-a-pull-request[opening a
+GitHub Pull Request] to the latest versioned branch (e.g. `1.1`) and
+filling out the template. We're incredibly grateful for contributions,
+including
+
+* new SDP libraries
+* new features for existing SDP libraries
+* improvements to existing SDP libraries
+* bug fixes
+
+If you're looking to contribute a feature suggestion, or want to help
+identify a bug, we appreciate that, too!
+
+=== What coding or style conventions should I follow?
+
+While we're still in the process of establishing a style guide, here are
+a few general conventions we've adopted:
+
+* Groovy files that define pipeline steps use snake_case for method and
+variable names
+* Indents are two (2) spaces.
+* Pipeline steps should not take any arguments. Any variables should be
+set in the
+https://jenkinsci.github.io/templating-engine-plugin/pages/Library_Development/externalizing_config.html#externalizing-library-configuration[pipeline
+configuration]
+* Pipeline steps' code should be within a
+https://jenkins.io/doc/book/pipeline/#stage[stage] and a
+https://jenkins.io/doc/book/pipeline/#node[node]
+* Application source code is stored in a "workspace"
+https://jenkins.io/doc/pipeline/steps/workflow-basic-steps/#stash-stash-some-files-to-be-used-later-in-the-build[stash].
+** Unstash the workspace if using the source code
+** Stash the workspace again to capture any changes used by other steps
+
+A good general reference is Cloudbees
+https://www.cloudbees.com/blog/top-10-best-practices-jenkins-pipeline-plugin[Top
+10 Best Practices for Jenkins Pipeline Plugin]. For those unfamiliar
+with Groovy, Apache has a good
+https://groovy-lang.org/style-guide.html[Groovy Style Guide] covering
+some of the general differences between Groovy and other languages. As a
+general note, the SDP uses _scripted_ Jenkins pipeline syntax, as
+opposed to _declarative_ pipeline syntax.
+
+=== How is the documentation formatted?
+
+Our documentation, including this guide, is written in reStructuredText,
+which is a markup language similar to Markdown. If you're unfamiliar
+with reStructuredText, there are README.rst files in existing libraries
+for reference, and
+http://docutils.sourceforge.net/rst.html#user-documentation[resources
+are available online].
+
+We ask that the documentation include
+
+* A general description of the library
+* The pipeline steps the library contributes
+* Information about any external configuration the library uses,
+including
+** Any fields in the library block
+** The datatype of those fields, and whether or not they're required
+** Any other template primitives used (e.g. app_env's)
+* Any external dependencies your library needs to work
+** Jenkins credentials
+** Content in the source code repository
+** Web services and related setup
+** Any Jenkins plugins or other libraries/steps the library depends on
+
+=== How do I test my changes?
+
+Check out
+https://boozallen.github.io/sdp-libraries/.docs/pages/unit-testing/index.html[our
+documentation on writing unit tests].
+
+=== Where can I report a bug?
+
+One way is to create a
+https://help.github.com/en/articles/creating-an-issue[GitHub issue]. If
+you do, please
+
+* include brief description
+* list versions for Jenkins, the templating engine, and any plugins or
+other software that might be relevant
+* describe how to recreate the issue
+* give it the _bug_ label, and any other relevant labels
+
+You can also talk with us directly on
+https://gitter.im/jenkinsci/templating-engine-plugin[our Gitter
+channel], and other Booz Allen Hamilton employees can reach us through
+the sdp-users slack channel.
+
+=== Where can I make a feature suggestion?
+
+While we ask that GitHub issues be limited to bugs and other defects, we
+welcome feature suggestions in
+https://gitter.im/jenkinsci/templating-engine-plugin[our Gitter channel]
+and internal sdp-users slack channel.
+
+You can also submit a feature suggestion along with the actual feature
+in a pull request, which we appreciate immensely!
+
+=== Where can I ask other questions?
+
+If you have questions that
+https://boozallen.github.io/sdp-docs/html/index.html[our documentation]
+can't answer, you can reach us through the Gitter and Slack channels
+mentioned above.

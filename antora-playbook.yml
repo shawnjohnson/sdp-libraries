@@ -1,0 +1,16 @@
+site:
+  title: SDP Pipeline Libraries
+  url: http://localhost
+  start_page: libraries::index.adoc
+content:
+  sources:
+  - url: .
+    branches: HEAD
+    start_path: libraries
+  - url: .
+    start_path: resources
+    branches: HEAD
+ui:
+  bundle:
+    url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable
+    snapshot: true

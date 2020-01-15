@@ -1,0 +1,1 @@
+* xref:CONTRIBUTING.adoc[Contribution Guide]

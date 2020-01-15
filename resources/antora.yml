@@ -1,0 +1,7 @@
+name: resources
+title: Resources
+version: 1.0
+start_page: contribute:CONTRIBUTING.adoc
+nav:
+- modules/contribute/nav.adoc
+- modules/unit-testing/nav.adoc
