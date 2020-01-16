@@ -8,8 +8,6 @@ nav:
 - modules/docker/nav.adoc
 - modules/github/nav.adoc
 - modules/github_enterprise/nav.adoc
-- modules/gitlab/nav.adoc
-- modules/kubernetes/nav.adoc
 - modules/openshift/nav.adoc
 - modules/owasp_dep_check/nav.adoc
 - modules/owasp_zap/nav.adoc
