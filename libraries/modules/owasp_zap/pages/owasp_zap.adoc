@@ -39,4 +39,4 @@ libraries{
 
 === Results
 
-image:../../images/owasp_zap/report.png[OWASP ZAP example]
+image:../_images/report.png[OWASP ZAP example]
