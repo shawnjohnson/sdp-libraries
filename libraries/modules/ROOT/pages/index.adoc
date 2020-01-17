@@ -1,5 +1,6 @@
 == Pipeline Libraries
 
+*Libaries* +
 link:../../../../build/site/libraries/1/a11y/a11y.html[The A11y Machine] +
 link:../../../../build/site/libraries/1/docker/docker.html[Docker] +
 link:../../../../build/site/libraries/1/github/github.html[GitHub] +
@@ -13,4 +14,9 @@ link:../../../../build/site/libraries/1/protractor/protractor.html[Protractor] +
 link:../../../../build/site/libraries/1/sdp/sdp.html[SDP] +
 link:../../../../build/site/libraries/1/slack/slack.html[Slack] +
 link:../../../../build/site/libraries/1/sonarqube/sonarqube.html[SonarQube] +
-link:../../../../build/site/libraries/1/twistlock/twistlock.html[Twistlock] +
+link:../../../../build/site/libraries/1/twistlock/twistlock.html[Twistlock] + 
+
+
+*Resources* +
+link:../../../../build/site/resources/1/contribute/CONTRIBUTING.html[Contribution Guide] +
+link:../../../../build/site/resources/1/unit-testing/index.html[Unit Testing] 
