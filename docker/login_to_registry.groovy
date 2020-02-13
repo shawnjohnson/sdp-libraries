@@ -11,7 +11,8 @@ void call(){
       assumeRole() 
     }
     
-    sh "$(aws ecr get-login --no-include-email)"
+    
+    sh "\$(aws ecr get-login --no-include-email)"
     
   } else {    
     withCredentials([usernamePassword(credentialsId: image_repo_cred, passwordVariable: 'pass', usernameVariable: 'user')]) {
