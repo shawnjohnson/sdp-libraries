@@ -12,10 +12,12 @@ def call(){
   enforce = config.enforce_quality_gate ?:
             true
 
+  server_name = config.server_name ?: "SonarQube"
+  
   stage("SonarQube Analysis"){
     inside_sdp_image "sonar-scanner", {
       withCredentials([usernamePassword(credentialsId: cred_id, passwordVariable: 'token', usernameVariable: 'user')]) {
-        withSonarQubeEnv("SonarQube"){
+        withSonarQubeEnv(server_name){
           unstash "workspace"
           try{ unstash "test-results" }catch(ex){}
           sh "mkdir -p empty"
